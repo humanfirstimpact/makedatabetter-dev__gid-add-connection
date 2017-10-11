@@ -59,10 +59,8 @@ Sample Input: (Query params)
                  method="POST" api-content-type="application/x-www-form-urlencoded" api-url={{_addConnUrl}}
                  response='{{addConnResponse}}'
                  error='{{addConnErrorResponse}}' request-body={{_addConnRequestBody}}
-                 api-params={{_addConnParams}} api-token={{_addConnToken}}
+                 api-token={{_addConnToken}}
                  api-timeout={{_addConnTimeout}}></gid-api>
-        <!-- fetch concept details -->
-
     </template>
     <script>
         (function () {
@@ -128,12 +126,6 @@ Sample Input: (Query params)
                     },
                     /*Parameter object*/
                     _paramsObj: {
-                        type: Object,
-                        notify: true,
-                        value: {}
-                    },
-                    /*Params sent to gid-api*/
-                    _addConnParams: {
                         type: Object,
                         notify: true,
                         value: {}
@@ -282,7 +274,7 @@ Sample Input: (Query params)
                             this.response = newvalue.response;
                         }, 500);
                     }
-                },
+                }
             });
         })();
     </script>

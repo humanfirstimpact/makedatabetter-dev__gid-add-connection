@@ -2,7 +2,7 @@
 
 <dom-module id="add-connection">
     <template>
-        <gid-add-connection api-url='https://ql50yzu0fj.execute-api.us-east-1.amazonaws.com/dev'
+        <gid-add-connection api-url='https://virtserver.swaggerhub.com/srimanta.maji/DISCOVERY/1'
                             common-name='CRM@newton' connection-name='CRM' host='192.168.33.10' port='1521'
                             db-type='Oracle' db-user='globalids' password='globalids123'
                             application='CRM APP' lob='Enterprise'
@@ -41,7 +41,7 @@
                 },
                 responseReceived: function () {
                     if (this.response)
-                        this.isConceptCreated = this.response.errorCode ? false : true;
+                        this.isConAdded = this.response.errorCode ? false : true;
                 }
             });
         })();
