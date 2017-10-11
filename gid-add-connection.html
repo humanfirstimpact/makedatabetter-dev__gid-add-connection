@@ -68,18 +68,12 @@ Sample Input: (Query params)
             Polymer({
                 is: 'gid-add-connection',
                 properties: {
-
-                    /*User Id*/
-                    user: {
-                        type: String,
-                        value: '',
-                        notify: true
-                    },
-                    /*User id is stored here. This is a private property*/
-                    owner: {
-                        type: String,
+                    /*This flag needs to be set 'true' to add a connection*/
+                    addCon: {
+                        type: Boolean,
                         notify: true,
-                        value: ''
+                        value: false,
+                        observer: '_fireAddCon'
                     },
                     /*Authorization token for accessing rest api*/
                     apiToken: {
@@ -111,13 +105,19 @@ Sample Input: (Query params)
                         type: String,
                         notify: true
                     },
-                    /*This flag needs to be set 'true' to add a connection*/
-                    addCon: {
-                        type: Boolean,
-                        notify: true,
-                        value: false,
-                        observer: '_fireAddCon'
+                    /*User Id*/
+                    user: {
+                        type: String,
+                        value: '',
+                        notify: true
                     },
+                    /*User id is stored here. This is a private property*/
+                    owner: {
+                        type: String,
+                        notify: true,
+                        value: ''
+                    },
+
                     /*Array listing the parameters*/
                     _paramsArr: {
                         type: Array,
@@ -145,13 +145,11 @@ Sample Input: (Query params)
                     addConnResponse: {
                         type: Object,
                         notify: true,
-                        observer: '_addConnResponseReceived'
                     },
                     /*Error sent to gid-api. This is a private property*/
                     addConnErrorResponse: {
                         type: String,
                         notify: true,
-                        observer: '_errorResponseReceived'
                     },
                     commonName: {
                         type: String,
@@ -208,8 +206,7 @@ Sample Input: (Query params)
                     _addConnToken: {
                         type: String,
                         notify: true
-                    },
-
+                    }
                 },
                 /* Reset method */
                 _reset: function () {
@@ -255,24 +252,6 @@ Sample Input: (Query params)
                         }
                         this._addConnTimeout = this._addConnTimeout - 1;
 
-                    }
-                },
-                _addConnResponseReceived: function (newvalue, oldvalue) {
-                    this._reset();
-                    if (newvalue != null) {
-                        this.async(function () {
-                            this.response = newvalue;
-                        }, 500);
-                    }
-
-                },
-                /* Error response handler */
-                _errorResponseReceived: function (newvalue, oldvalue) {
-                    this._reset();
-                    if (newvalue !== null) {
-                        this.async(function () {
-                            this.response = newvalue.response;
-                        }, 500);
                     }
                 }
             });

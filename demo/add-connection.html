@@ -7,7 +7,7 @@
                             db-type='Oracle' db-user='globalids' password='globalids123'
                             application='CRM APP' lob='Enterprise'
                             api-token='MTAxNjUwMzAxMTUwNDUwNTg3NDkwODA5MDFY'
-                            add-con=true add-conn-response='{{response}}'>
+                            add-con=true add-conn-response='{{response}}' add-conn-error-response="{{error}}">
         </gid-add-connection>
 
         <template is="dom-if" if="[[isConAdded]]">
@@ -17,7 +17,7 @@
         </template>
         <template is="dom-if" if="![[isConAdded]]">
             <div class="horizontal-section">
-                <p>{{response.developerMessage}}</p>
+                <p>{{error.developerMessage}}</p>
             </div>
         </template>
 
@@ -34,6 +34,12 @@
                         notify: true,
                         observer: 'responseReceived'
                     },
+                    error: {
+                        type: Object,
+                        value: {},
+                        notify: true,
+                        observer: 'errorReceived'
+                    },
                     isConAdded: {
                         type: Boolean,
                         value: false
@@ -42,6 +48,10 @@
                 responseReceived: function () {
                     if (this.response)
                         this.isConAdded = this.response.errorCode ? false : true;
+                },
+                errorReceived: function () {
+                    if (this.error)
+                        this.isConAdded = false;//this.error.errorCode ? false : true;
                 }
             });
         })();
