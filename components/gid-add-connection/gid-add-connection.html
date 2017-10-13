@@ -13,13 +13,14 @@ A data component to add a new connection
                             db-type='Oracle' db-user='globalids' password='globalids123'
                             application='CRM APP' lob='Enterprise'
                             api-token='MTAxNjUwMzAxMTUwNDUwNTg3NDkwODA5MDFY'
-                            create=true response='{{response}}'>
+                            add-con=true db-response='{{response}}' db-error="{{error}}>
         </gid-add-connection>
     
 The fields 'common-name', 'connection-name', 'host', 'port', 'db-type', 'db-user', 'password', 'application' &
 'lob' are mandatory.
 
-The property 'add-conn-response' returns the response against the rest call.
+The property 'db-response' returns the response against the rest call.
+The property 'db-error' returns the error response against the rest call.
 
 If 'apiUrl' is not provided, then the component would fetch sample data from mock json.
 
@@ -40,7 +41,8 @@ Input:
  lob
  apiToken
  addCon
- addConnResponse
+ dbResponse
+ dbError
 
 Sample Input: (Query params)
 
@@ -57,8 +59,8 @@ Sample Input: (Query params)
         <!-- fetch concept details -->
         <gid-api auto=false
                  method="POST" api-content-type="application/x-www-form-urlencoded" api-url={{_addConnUrl}}
-                 response='{{addConnResponse}}'
-                 error='{{addConnErrorResponse}}' request-body={{_addConnRequestBody}}
+                 response='{{_addConnResponse}}'
+                 error='{{_addConnError}}' request-body={{_addConnRequestBody}}
                  api-token={{_addConnToken}}
                  api-timeout={{_addConnTimeout}}></gid-api>
     </template>
@@ -72,7 +74,7 @@ Sample Input: (Query params)
                     addCon: {
                         type: Boolean,
                         notify: true,
-                        value: false,
+//                        value: false,
                         observer: '_fireAddCon'
                     },
                     /*Authorization token for accessing rest api*/
@@ -141,15 +143,29 @@ Sample Input: (Query params)
                         type: String,
                         notify: true
                     },
-                    /*Response sent to gid-api. This is a private property*/
-                    addConnResponse: {
+                    /*Response sent to gid-api.*/
+                    _addConnResponse: {
                         type: Object,
                         notify: true,
+                        observer: '_addConnResponseReceived'
                     },
-                    /*Error sent to gid-api. This is a private property*/
-                    addConnErrorResponse: {
+                    /*Error sent to gid-api.*/
+                    _addConnError: {
                         type: String,
                         notify: true,
+                        observer: '_addConnErrorReceived'
+                    },
+                    /*Object for storing success response*/
+                    dbResponse: {
+                        type: Object,
+                        value: {},
+                        notify: true
+                    },
+                    /*Object for storing error response*/
+                    dbError: {
+                        type: Object,
+                        value: {},
+                        notify: true
                     },
                     commonName: {
                         type: String,
@@ -228,7 +244,7 @@ Sample Input: (Query params)
                 },
                 /* Observer for api path */
                 _pathReceived: function () {
-                    if (this._path) {
+                    if (this._path && this._path.length > 0) {
                         var res = this._path.split(/{([^}]+)}/);
                         for (var i in res) {
                             if (!res[i].startsWith("/")) {
@@ -238,20 +254,36 @@ Sample Input: (Query params)
                             }
                         }
                         this._addConnUrl = this.apiUrl + res.join("");
-                        var paramVal = '';
                         for (var i in this._paramsArr) {
                             if (this[this._paramsArr[i]]) {
                                 this._paramsObj[this._paramsArr[i]] = this[this._paramsArr[i]];
                             }
 
                         }
-                        this._paramsObj = obj;
                         this._addConnRequestBody = JSON.stringify(this._paramsObj);
                         if (this.apiToken) {
                             this._addConnToken = this.apiToken;
                         }
                         this._addConnTimeout = this._addConnTimeout - 1;
 
+                    }
+                },
+
+                _addConnResponseReceived: function (newvalue, oldvalue) {
+                    this._reset();
+                    if (newvalue != null) {
+                        this.async(function () {
+                            this.dbResponse = newvalue.database;
+                        }, 500);
+                    }
+                },
+
+                _addConnErrorReceived: function (newvalue, oldvalue) {
+                    this._reset();
+                    if (newvalue !== null) {
+                        this.async(function () {
+                            this.dbError = newvalue;
+                        }, 500);
                     }
                 }
             });
