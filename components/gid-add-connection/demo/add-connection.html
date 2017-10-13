@@ -2,13 +2,14 @@
 
 <dom-module id="add-connection">
     <template>
-        <gid-add-connection api-url='https://virtserver.swaggerhub.com/srimanta.maji/DISCOVERY/1'
+
+        <gid-add-connection add-con=true api-url="https://virtserver.swaggerhub.com/srimanta.maji/DISCOVERY/1"
                             common-name='CRM@newton' connection-name='CRM' host='192.168.33.10' port='1521'
                             db-type='Oracle' db-user='globalids' password='globalids123'
                             application='CRM APP' lob='Enterprise'
-                            api-token='MTAxNjUwMzAxMTUwNDUwNTg3NDkwODA5MDFY'
-                            add-con=true add-conn-response='{{response}}' add-conn-error-response="{{error}}">
+                            db-response='{{response}}' db-error="{{error}}">
         </gid-add-connection>
+        <!--api-token='MTAxNjUwMzAxMTUwNDUwNTg3NDkwODA5MDFY'-->
 
         <template is="dom-if" if="[[isConAdded]]">
             <div class="horizontal-section">
@@ -17,7 +18,7 @@
         </template>
         <template is="dom-if" if="![[isConAdded]]">
             <div class="horizontal-section">
-                <p>{{error.developerMessage}}</p>
+                <p>{{error.userMsg}}</p>
             </div>
         </template>
 
